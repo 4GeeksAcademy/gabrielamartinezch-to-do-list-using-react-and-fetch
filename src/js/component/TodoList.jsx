@@ -6,8 +6,8 @@ const TodoList2 = () => {
 
   const [tareas, setTareas] = useState([]);
   const [nuevaTarea, setNuevaTarea] = useState('');
-  
-  // Función para obtener las tareas
+
+  // PUT
   const traerTareas = async () => {
     try {
       const uri = `${host}/users/${user}`;
@@ -21,7 +21,8 @@ const TodoList2 = () => {
       console.error(error);
     }
   };
-  // Función para agregar una nueva tarea
+
+  // POST
   const crearTareas = async () => {
     try {
       const uri = `${host}/todos/${user}`;
@@ -40,9 +41,9 @@ const TodoList2 = () => {
       console.error(error);
     }
   };
-  // Función para eliminar una tarea
+
+  // DELETE
   const eliminarTarea = async (id) => {
-    try {
       const uri = `${host}/todos/${id}`;
       const options = { method: 'DELETE' };
       const response = await fetch(uri, options);
@@ -50,32 +51,47 @@ const TodoList2 = () => {
         throw new Error(`Error al eliminar la tarea: ${response.status} ${response.statusText}`);
       }
       traerTareas();
-  
-  };
-  
-  useEffect(() => {
-    traerTareas();
-  }, []);
 
-  return (
-    <div>
-      <h1>To Do List</h1>
-      <input
-        type="text"
-        value={nuevaTarea}
-        onChange={(evento) => setNuevaTarea(evento.target.value)}
-        placeholder="Escribe una tarea"
-      />
-      <button onClick={crearTareas}>Agregar</button>
-      <ul>
-        {tareas.map((tarea) => (
-          <li key={tarea.id}>
-            {tarea.label}
-            <button onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-export default TodoList2;
+  };
+
+  // GET
+  const obtenerTarea = async (id) => {
+   // try {
+      const uri = `${host}/users/${user}`;
+      const options = { method: 'GET' };
+
+      const response = await fetch(uri, options);
+      if (!response.ok) {
+        throw new Error(`Error al obtener la tarea: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      obtenerTarea(data.todos)
+    };
+
+    useEffect(() => {
+      traerTareas();
+    }, []);
+
+    return (
+      <div>
+        <h1>To Do List</h1>
+        <input
+          type="text"
+          value={nuevaTarea}
+          onChange={(evento) => setNuevaTarea(evento.target.value)}
+          placeholder="Escribe una tarea"
+        />
+        <button onClick={crearTareas}>Agregar</button>
+        <ul>
+          {tareas.map((tarea) => (
+            <li key={tarea.id}>
+              {tarea.label}
+              <button onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  export default TodoList2;
